@@ -1,4 +1,4 @@
-﻿namespace Alley.Models
+﻿namespace Alley.Core.Models
 {
     internal class Result<T> : ResultBase
     {
@@ -37,6 +37,11 @@
 
     internal class Result : ResultBase
     {
+        public Result(bool isSuccess, string errorMessage)
+        {
+            IsSuccess = isSuccess;
+            ErrorMessage = errorMessage;
+        }
 
         private Result()
         {

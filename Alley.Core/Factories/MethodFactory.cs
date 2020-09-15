@@ -1,8 +1,11 @@
-﻿using Alley.Models;
-using Alley.Validators;
+﻿using Alley.Core.Models;
+using Alley.Core.Serialization;
+using Alley.Core.Utilities;
+using Alley.Core.Validators;
 using Grpc.Core;
+using Serilog;
 
-namespace Alley
+namespace Alley.Core.Factories
 {
     internal class MethodFactory
     {
@@ -11,8 +14,9 @@ namespace Alley
         public Result<Method<IAlleyMessageModel, IAlleyMessageModel>> Create(AlleyMethodModel methodModel)
         {
             var modelValidationResult = _methodModelValidator.Validate(methodModel);
-            if (modelValidationResult.IsFailed)
+            if (modelValidationResult.IsFailure)
             {
+                Log.Error(LogMessageFactory.Create(modelValidationResult.ErrorMessage));
                 return Result<Method<IAlleyMessageModel, IAlleyMessageModel>>.Failure(modelValidationResult.ErrorMessage);
             }
             var serviceFullName = FormatServiceFullName(methodModel.PackageName, methodModel.ServiceName);

@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Alley.Configuration;
-using Alley.Models;
-using Alley.Utilities;
+using Alley.Core.Factories;
+using Alley.Core.Models;
+using Alley.Core.Providers;
+using Alley.Core.Services;
+using Alley.Core.Utilities;
 using Google.Protobuf.Reflection;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Serilog;
 
-namespace Alley
+namespace Alley.Core
 {
     public class GrpcServerBuilder
     {
@@ -20,13 +19,13 @@ namespace Alley
         private readonly FileDescriptorSet _fileDescriptorSet = new FileDescriptorSet();
         private readonly IConfigurationService _configuration;
         private readonly MethodFactory _methodFactory;
-        private readonly AlleyMethodHandlerFactory _alleyMethodHandlerFactory;
+        private readonly AlleyMethodHandlerProvider _alleyMethodHandlerProvider;
 
         public GrpcServerBuilder(IConfigurationService configuration)
         {
             _configuration = configuration;
             _methodFactory = new MethodFactory();
-            _alleyMethodHandlerFactory = new AlleyMethodHandlerFactory();
+            _alleyMethodHandlerProvider = new AlleyMethodHandlerProvider();
         }
 
         public Server Build()
@@ -85,7 +84,7 @@ namespace Alley
             var methodCreationResult = _methodFactory.Create(methodModel);
             if (methodCreationResult.IsFailure)
             {
-                Log.Error(LogMessageFactory.Create(methodCreationResult.ErrorMessage));
+                return;
             }
 
             var addingResult = AddMethod(serviceBuilder, methodCreationResult.Value);
@@ -97,27 +96,29 @@ namespace Alley
 
         private Result AddMethod(ServerServiceDefinition.Builder serviceBuilder, Method<IAlleyMessageModel, IAlleyMessageModel> methodModel)
         {
+            
+            
             switch (methodModel.Type)
             {
                 case MethodType.Unary:
                     serviceBuilder.AddMethod(
                         methodModel,
-                        _alleyMethodHandlerFactory.GetUnaryHandler());
+                        _alleyMethodHandlerProvider.GetUnaryHandler(methodModel));
                     break;
                 case MethodType.ClientStreaming:
                     serviceBuilder.AddMethod(
                         methodModel,
-                        _alleyMethodHandlerFactory.GetClientStreamingHandler());
+                        _alleyMethodHandlerProvider.GetClientStreamingHandler(methodModel));
                     break;
                 case MethodType.ServerStreaming:
                     serviceBuilder.AddMethod(
                         methodModel,
-                        _alleyMethodHandlerFactory.GetServerStreamingHandler());
+                        _alleyMethodHandlerProvider.GetServerStreamingHandler(methodModel));
                     break;
                 case MethodType.DuplexStreaming:
                     serviceBuilder.AddMethod(
                         methodModel,
-                        _alleyMethodHandlerFactory.GetDuplexStreamingHandler());
+                        _alleyMethodHandlerProvider.GetDuplexStreamingHandler(methodModel));
                     break;
                 default:
                     return Result.Failure(new ArgumentOutOfRangeException().ToString());

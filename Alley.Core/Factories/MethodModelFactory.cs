@@ -1,8 +1,8 @@
-﻿using Alley.Models;
-using Alley.Utilities;
+﻿using Alley.Core.Models;
+using Alley.Core.Utilities;
 using Google.Protobuf.Reflection;
 
-namespace Alley
+namespace Alley.Core.Factories
 {
     internal class MethodModelFactory
     {
@@ -16,7 +16,7 @@ namespace Alley
             string serviceName, string methodName)
         {
             return new AlleyMethodModel(
-                GrpcMethodHelper.GetMethodType(clientStreaming, serverStreaming),
+                MethodTypeHelper.GetMethodType(clientStreaming, serverStreaming),
                 packageName,
                 serviceName,
                 methodName);

@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 
-namespace Alley.Models
+namespace Alley.Core.Models
 {
     public class AlleyMethodModel
     {

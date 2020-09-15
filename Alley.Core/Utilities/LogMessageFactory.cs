@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Alley.Utilities
+namespace Alley.Core.Utilities
 {
     internal static class LogMessageFactory
     {

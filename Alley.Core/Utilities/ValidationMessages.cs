@@ -1,4 +1,4 @@
-﻿namespace Alley.Utilities
+﻿namespace Alley.Core.Utilities
 {
     public static class ValidationMessages
     {

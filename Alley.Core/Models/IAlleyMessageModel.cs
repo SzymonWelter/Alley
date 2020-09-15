@@ -1,4 +1,4 @@
-﻿namespace Alley.Models
+﻿namespace Alley.Core.Models
 {
     public interface IAlleyMessageModel
     {

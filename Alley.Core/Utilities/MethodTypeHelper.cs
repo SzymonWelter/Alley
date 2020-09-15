@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Alley.Models;
-using Grpc.Core;
+﻿using Grpc.Core;
 
-namespace Alley.Utilities
+namespace Alley.Core.Utilities
 {
-    internal static class GrpcMethodHelper
+    internal static class MethodTypeHelper
     {
         private static readonly MethodType[] MethodTypeMatrix =
         {

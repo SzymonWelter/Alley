@@ -1,20 +1,20 @@
-﻿using Alley.Models;
-using Alley.Utilities;
+﻿using Alley.Core.Models;
+using Alley.Core.Utilities;
 
-namespace Alley.Validators
+namespace Alley.Core.Validators
 {
     internal class MethodModelValidator : IValidator<AlleyMethodModel>
     {
         private bool _isSuccess;
         private string _errorMessage;
         
-        public ValidationResult Validate(AlleyMethodModel model)
+        public Result Validate(AlleyMethodModel validationCandidate)
         {
             ResetResult();
-            ValidatePackageName(model.PackageName);
-            ValidateServiceName(model.ServiceName);
-            ValidateMethodName(model.MethodName);
-            return new ValidationResult(_isSuccess, _errorMessage);
+            ValidatePackageName(validationCandidate.PackageName);
+            ValidateServiceName(validationCandidate.ServiceName);
+            ValidateMethodName(validationCandidate.MethodName);
+            return new Result(_isSuccess, _errorMessage);
         }
 
         private void ResetResult()

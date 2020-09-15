@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Alley.Models;
+﻿using Alley.Core.Models;
 using Grpc.Core;
 
-namespace Alley
+namespace Alley.Core.Serialization
 {
     public static class AlleyMessageSerializer
     {
