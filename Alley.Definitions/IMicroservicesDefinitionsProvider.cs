@@ -4,6 +4,6 @@ namespace Alley.Definitions
 {
     public interface IMicroservicesDefinitionsProvider
     {
-        IEnumerable<MicroserviceDefinition> GetMicroservicesDefinitions();
+        IEnumerable<IMicroserviceDefinition> GetMicroservicesDefinitions();
     }
 }
