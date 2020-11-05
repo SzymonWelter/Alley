@@ -1,5 +1,6 @@
-﻿using Alley.Core.Models;
-using Grpc.Core;
+﻿using Grpc.Core;
+using Alley.Definitions.Models;
+using Alley.Definitions.Models.Interfaces;
 
 namespace Alley.Core.Serialization
 {

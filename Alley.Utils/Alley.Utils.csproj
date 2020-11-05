@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Serilog" Version="2.9.0" />
+      <PackageReference Include="System.IO.Abstractions" Version="12.2.7" />
     </ItemGroup>
 
 </Project>

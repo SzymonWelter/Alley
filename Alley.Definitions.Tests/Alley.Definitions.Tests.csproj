@@ -20,10 +20,4 @@
       <ProjectReference Include="..\Alley.Definitions\Alley.Definitions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="test.proto">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>

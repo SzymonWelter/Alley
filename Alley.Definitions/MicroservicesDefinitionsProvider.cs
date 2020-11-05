@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using Alley.Configuration;
+using Alley.Definitions.Interfaces;
+using Alley.Definitions.Models.Interfaces;
+using Alley.Utils.Configuration;
 
 namespace Alley.Definitions
 {
@@ -13,8 +13,8 @@ namespace Alley.Definitions
         private readonly IMicroserviceDefinitionBuilder _definitionBuilder;
 
         public MicroservicesDefinitionsProvider(
-            IConfigurationProvider configurationProvider, 
-            IMicroserviceDefinitionBuilder definitionBuilder)
+            IMicroserviceDefinitionBuilder definitionBuilder,
+            IConfigurationProvider configurationProvider)
         {
             _configurationProvider = configurationProvider;
             _definitionBuilder = definitionBuilder;

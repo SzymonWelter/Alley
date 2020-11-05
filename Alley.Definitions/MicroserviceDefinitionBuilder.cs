@@ -1,46 +1,45 @@
 ﻿using System;
-using System.IO;
 using System.IO.Abstractions;
+using Alley.Definitions.Factories.Interfaces;
+using Alley.Definitions.Interfaces;
+using Alley.Definitions.Models;
+using Alley.Definitions.Models.Interfaces;
+using Alley.Definitions.Wrappers.Interfaces;
 using Alley.Utils;
+using Alley.Utils.Models;
 
 namespace Alley.Definitions
 {
     internal class MicroserviceDefinitionBuilder : IMicroserviceDefinitionBuilder
     {
         private readonly IMicroserviceDescriptor _microserviceDescriptor;
+        private readonly ITextReaderFactory _textReaderFactory;
         private readonly IAlleyLogger _logger;
-        public MicroserviceDefinitionBuilder(IMicroserviceDescriptor microserviceDescriptor, IAlleyLogger logger)
+
+        public MicroserviceDefinitionBuilder(IMicroserviceDescriptor microserviceDescriptor,
+            ITextReaderFactory textReaderFactory, IAlleyLogger logger)
         {
             _microserviceDescriptor = microserviceDescriptor;
+            _textReaderFactory = textReaderFactory;
             _logger = logger;
         }
 
         public void AddProto(IFileInfo proto)
         {
             IResult result;
-            try
+
+            var textReaderCreationResult = _textReaderFactory.Create(proto.FullName);
+            if (textReaderCreationResult.IsSuccess)
             {
-                using var protoStream = File.OpenRead(proto.FullName);
+                using var protoStream = textReaderCreationResult.Value;
                 result = _microserviceDescriptor.Read(proto.Name, protoStream);
             }
-            catch (Exception e)
+            else
             {
-                result = Result.Failure(e.Message);
+                result = textReaderCreationResult;
             }
-            
-            LogResult(result);
-        }
 
-        private void LogResult(IResult result)
-        {
-            if (result.IsSuccess && result.IsNotHandled)
-            {
-                _logger.Information(result.Message);
-            }
-            else if (result.IsFailure && result.IsNotHandled)
-            {
-                _logger.Error(result.Message);
-            }
+            _logger.LogResult(result);
         }
 
         public IMicroserviceDefinition Build(string name)

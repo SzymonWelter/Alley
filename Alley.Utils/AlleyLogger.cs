@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Alley.Utils.Models;
 using Serilog;
 
 namespace Alley.Utils
@@ -25,6 +26,20 @@ namespace Alley.Utils
         public void Warning(string message)
         {
             _logger.Information(GetWarningMessage(message));
+        }
+        
+        public void LogResult(IResult result)
+        {
+            if (result.IsSuccess && result.IsNotHandled)
+            {
+                _logger.Information(result.Message);
+            }
+            else if (result.IsFailure && result.IsNotHandled)
+            {
+                _logger.Error(result.Message);
+            }
+
+            result.IsHandled = true;
         }
 
         private string GetErrorMessage(string errorMessage)

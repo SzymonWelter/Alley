@@ -1,76 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Alley.Core.Factories;
-using Alley.Core.Models;
-using Alley.Core.Providers;
-using Alley.Core.Services;
-using Alley.Core.Utilities;
-using Google.Protobuf.Reflection;
+using Alley.Definitions.Mappers.Interfaces;
+using Alley.Definitions.Models.Interfaces;
 using Grpc.Core;
-using Serilog;
 
 namespace Alley.Core
 {
     public class GrpcServerBuilder
     {
-        private const string SearchPattern = "*.proto";
-        private readonly FileDescriptorSet _fileDescriptorSet = new FileDescriptorSet();
-        private readonly IConfigurationService _configuration;
-        private readonly MethodFactory _methodFactory;
-        private readonly AlleyMethodHandlerProvider _alleyMethodHandlerProvider;
+        private readonly IMethodHandlerFactory _methodHandlerFactory;
+        private readonly IMethodMapper _methodMapper;
+        private readonly Server _server;
 
-        public GrpcServerBuilder(IConfigurationService configuration)
+        public GrpcServerBuilder(
+            IMethodHandlerFactory methodHandlerFactory,
+                IMethodMapper methodMapper
+        )
         {
-            _configuration = configuration;
-            _methodFactory = new MethodFactory();
-            _alleyMethodHandlerProvider = new AlleyMethodHandlerProvider();
+            _methodHandlerFactory = methodHandlerFactory;
+            _methodMapper = methodMapper;
+            _server = new Server();
         }
 
-        public Server Build()
+        public GrpcServerBuilder AddService(IGrpcServiceDefinition serviceDefinition)
         {
-            var server = new Server();
-            var serviceBuilder = ServerServiceDefinition.CreateBuilder();
+            var serverServiceDefinitionBuilder = ServerServiceDefinition.CreateBuilder();
 
-            var methodModels = GetMethodModels();
-            
-            foreach ( var methodModel in methodModels)
+            foreach (var methodDefinition in serviceDefinition.Methods)
             {
-                AddMethodToServiceBuilder(serviceBuilder, methodModel);
+                var method = _methodMapper.Map(methodDefinition);
+                AddMethod(serverServiceDefinitionBuilder, method);
             }
-            
-            server.Ports.Add("localhost", 5000, ServerCredentials.Insecure);
-            server.Services.Add(serviceBuilder.Build());
-
-            return server;
-        }
-
-        private IEnumerable<AlleyMethodModel> GetMethodModels()
-        {
-            var methodModelFactory = new MethodModelFactory();
-            return
-                from fileDescriptor in _fileDescriptorSet.Files
-                from service in fileDescriptor.Services
-                from method in service.Methods
-                select 
-                    methodModelFactory.Create(
-                        fileDescriptor,
-                        service,
-                        method
-                    );
-        }
-
-        public GrpcServerBuilder ConfigureFromProtos(DirectoryInfo protosLocalization)
-        {
-            var filesInfo = protosLocalization.EnumerateFiles(SearchPattern);
-            foreach (var fileInfo in filesInfo)
-            {
-                using var file = File.OpenRead(fileInfo.FullName);
-                _fileDescriptorSet.Add(fileInfo.Name,true, new StreamReader(file));
-            }
-            _fileDescriptorSet.Process();
+            _server.Services.Add(serverServiceDefinitionBuilder.Build());
             return this;
+        }
+
+        private void AddMethod(ServerServiceDefinition.Builder serverServiceDefinitionBuilder, Method<IAlleyMessageModel, IAlleyMessageModel> method)
+        {
+            switch(method.Type)
+            {
+                case MethodType.Unary:
+                    var unaryHandler = _methodHandlerFactory.GetUnaryHandler(method);
+                    serverServiceDefinitionBuilder.AddMethod(method, unaryHandler);
+                    break;
+                case MethodType.ClientStreaming:
+                    var clientStreamingHandler = _methodHandlerFactory.GetClientStreamingServerHandler(method);
+                    serverServiceDefinitionBuilder.AddMethod(method, clientStreamingHandler);
+                    break;
+                case MethodType.ServerStreaming:
+                    var serverStreamingHandler = _methodHandlerFactory.GetServerStreamingServerHandler(method);
+                    serverServiceDefinitionBuilder.AddMethod(method, serverStreamingHandler);
+                    break;
+                case MethodType.DuplexStreaming:
+                    var duplexStreamingServerHandler = _methodHandlerFactory.GetDuplexStreamingServerHandler(method);
+                    serverServiceDefinitionBuilder.AddMethod(method, duplexStreamingServerHandler);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public AlleyServer Build()
+        {
+            return new AlleyServer(_server);
         }
 
         public GrpcServerBuilder EnableHttp()
@@ -79,51 +71,9 @@ namespace Alley.Core
             return this;
         }
 
-        private void AddMethodToServiceBuilder(ServerServiceDefinition.Builder serviceBuilder, AlleyMethodModel methodModel)
+        private void ConfigurePorts(ServerPort serverPort)
         {
-            var methodCreationResult = _methodFactory.Create(methodModel);
-            if (methodCreationResult.IsFailure)
-            {
-                return;
-            }
-
-            var addingResult = AddMethod(serviceBuilder, methodCreationResult.Value);
-            if (addingResult.IsFailure)
-            {
-                 Log.Error(LogMessageFactory.Create(addingResult.ErrorMessage));
-            }
-        }
-
-        private Result AddMethod(ServerServiceDefinition.Builder serviceBuilder, Method<IAlleyMessageModel, IAlleyMessageModel> methodModel)
-        {
-            
-            
-            switch (methodModel.Type)
-            {
-                case MethodType.Unary:
-                    serviceBuilder.AddMethod(
-                        methodModel,
-                        _alleyMethodHandlerProvider.GetUnaryHandler(methodModel));
-                    break;
-                case MethodType.ClientStreaming:
-                    serviceBuilder.AddMethod(
-                        methodModel,
-                        _alleyMethodHandlerProvider.GetClientStreamingHandler(methodModel));
-                    break;
-                case MethodType.ServerStreaming:
-                    serviceBuilder.AddMethod(
-                        methodModel,
-                        _alleyMethodHandlerProvider.GetServerStreamingHandler(methodModel));
-                    break;
-                case MethodType.DuplexStreaming:
-                    serviceBuilder.AddMethod(
-                        methodModel,
-                        _alleyMethodHandlerProvider.GetDuplexStreamingHandler(methodModel));
-                    break;
-                default:
-                    return Result.Failure(new ArgumentOutOfRangeException().ToString());
-            }
-            return Result.Success();
+            _server.Ports.Add(serverPort);
         }
     }
 }
