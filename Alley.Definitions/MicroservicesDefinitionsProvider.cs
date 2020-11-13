@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using Alley.Definitions.Factories.Interfaces;
 using Alley.Definitions.Interfaces;
 using Alley.Definitions.Models.Interfaces;
 using Alley.Utils.Configuration;
 
 namespace Alley.Definitions
 {
-    internal class MicroservicesDefinitionsProvider : IMicroservicesDefinitionsProvider
+    public class MicroservicesDefinitionsProvider : IMicroservicesDefinitionsProvider
     {
         private readonly IConfigurationProvider _configurationProvider;
-        private readonly IMicroserviceDefinitionBuilder _definitionBuilder;
+        private readonly IMicroserviceDefinitionBuilderFactory _definitionBuilderFactory;
 
         public MicroservicesDefinitionsProvider(
-            IMicroserviceDefinitionBuilder definitionBuilder,
+            IMicroserviceDefinitionBuilderFactory definitionBuilderFactory,
             IConfigurationProvider configurationProvider)
         {
             _configurationProvider = configurationProvider;
-            _definitionBuilder = definitionBuilder;
+            _definitionBuilderFactory = definitionBuilderFactory;
         }
         
         public IEnumerable<IMicroserviceDefinition> GetMicroservicesDefinitions()
@@ -32,11 +33,12 @@ namespace Alley.Definitions
         private IMicroserviceDefinition GetMicroserviceDefinition(IDirectoryInfo localization)
         {
             var files = localization.GetFiles(_configurationProvider.ProtoPattern);
+            var definitionBuilder = _definitionBuilderFactory.Create();
             foreach (var file in files)
             {
-                _definitionBuilder.AddProto(file);
+                definitionBuilder.AddProto(file);
             }
-            return _definitionBuilder.Build(localization.Name);
+            return definitionBuilder.Build(localization.Name);
         }
     }
 }

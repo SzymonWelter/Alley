@@ -1,6 +1,4 @@
-﻿using Alley.Definitions.Models.Interfaces;
-
-namespace Alley.Definitions.Models
+﻿namespace Alley.Serialization.Models
 {
     public class AlleyMessageModel : IAlleyMessageModel
     {
