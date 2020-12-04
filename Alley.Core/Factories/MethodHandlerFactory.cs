@@ -1,4 +1,5 @@
-﻿using Alley.Context.Providers;
+﻿using System;
+using Alley.Core.Handling;
 using Grpc.Core;
 
 namespace Alley.Core.Factories
@@ -7,23 +8,19 @@ namespace Alley.Core.Factories
         where TRequest : class
         where TResponse : class
     {
-        private readonly IConnectionDataProvider<TRequest, TResponse> _connectionDataProvider;
-        private readonly IConnectionSessionFactory<TRequest, TResponse> _connectionSessionFactory;
+        private readonly ISessionFactory<TRequest, TResponse> _sessionFactory;
 
         public MethodHandlerFactory(
-            IConnectionDataProvider<TRequest, TResponse> connectionDataProvider, 
-            IConnectionSessionFactory<TRequest, TResponse> connectionSessionFactory)
+            ISessionFactory<TRequest, TResponse> sessionFactory)
         {
-            _connectionDataProvider = connectionDataProvider;
-            _connectionSessionFactory = connectionSessionFactory;
+            _sessionFactory = sessionFactory;
         }
 
         public UnaryServerMethod<TRequest, TResponse> GetUnaryHandler()
         {
             return async (request, context) =>
             {
-                var connectionData = _connectionDataProvider.GetConnectionData(context.Method, MethodType.Unary);
-                using var connection = _connectionSessionFactory.Create(connectionData);
+                var connection = _sessionFactory.CreateSession(context.Method, MethodType.Unary);
                 return await connection.Execute(request, context);
             };
         }
@@ -32,8 +29,7 @@ namespace Alley.Core.Factories
         {
             return async (requestStream, context) =>
             {
-                var connectionData = _connectionDataProvider.GetConnectionData(context.Method, MethodType.ClientStreaming);
-                using var connection = _connectionSessionFactory.Create(connectionData);
+                var connection =  _sessionFactory.CreateSession(context.Method, MethodType.ClientStreaming);
                 return await connection.Execute(requestStream, context);
             };        
         }
@@ -42,8 +38,7 @@ namespace Alley.Core.Factories
         {
             return async (request, responseStream, context) =>
             {
-                var connectionData = _connectionDataProvider.GetConnectionData(context.Method, MethodType.ServerStreaming);
-                using var connection = _connectionSessionFactory.Create(connectionData);
+                var connection = _sessionFactory.CreateSession(context.Method, MethodType.ServerStreaming);
                 await connection.Execute(request, responseStream, context);
             };        
         }
@@ -52,8 +47,7 @@ namespace Alley.Core.Factories
         {
             return async (requestStream, responseStream, context) =>
             {
-                var connectionData = _connectionDataProvider.GetConnectionData(context.Method, MethodType.DuplexStreaming);
-                using var connection = _connectionSessionFactory.Create(connectionData);
+                var connection = _sessionFactory.CreateSession(context.Method, MethodType.DuplexStreaming);
                 await connection.Execute(requestStream, responseStream, context);
             };        
         }

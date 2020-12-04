@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 
-namespace Alley.Core.Session
+namespace Alley.Core.Handling
 {
-    public interface IConnectionSession<in TRequest, TResponse> : IDisposable
+    public interface IConnectionSession<in TRequest, TResponse>
         where TRequest : class
         where TResponse : class
     {
