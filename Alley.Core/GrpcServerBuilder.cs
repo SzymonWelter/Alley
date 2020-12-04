@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Alley.Core.Factories;
 using Alley.Definitions.Mappers.Interfaces;
@@ -7,7 +8,7 @@ using Grpc.Core;
 
 namespace Alley.Core
 {
-    public class GrpcServerBuilder<TRequest, TResponse> 
+    public class GrpcServerBuilder<TRequest, TResponse> : IGrpcServerBuilder<TRequest, TResponse> 
         where TRequest : class 
         where TResponse : class
     {
@@ -18,12 +19,22 @@ namespace Alley.Core
 
         public GrpcServerBuilder(
             IMethodHandlerFactory<TRequest, TResponse> methodHandlerFactory,
-                IMethodFactory<TRequest, TResponse> methodFactory
+            IMethodFactory<TRequest, TResponse> methodFactory
         )
         {
             _methodHandlerFactory = methodHandlerFactory;
             _methodFactory = methodFactory;
             _server = new Server();
+        }
+        
+        public GrpcServerBuilder<TRequest, TResponse> AddServices(IEnumerable<IGrpcServiceDefinition> serviceDefinitions)
+        {
+            foreach (var serviceDefinition in serviceDefinitions)
+            {
+                this.AddService(serviceDefinition);
+            }
+
+            return this;
         }
 
         public GrpcServerBuilder<TRequest, TResponse> AddService(IGrpcServiceDefinition serviceDefinition)
@@ -86,7 +97,7 @@ namespace Alley.Core
             return this;
         }
 
-        private void ConfigurePorts(ServerPort serverPort)
+        public void ConfigurePorts(ServerPort serverPort)
         {
             _server.Ports.Add(serverPort);
         }
