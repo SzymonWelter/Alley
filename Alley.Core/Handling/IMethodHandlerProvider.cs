@@ -1,8 +1,8 @@
 ﻿using Grpc.Core;
 
-namespace Alley.Core.Factories
+namespace Alley.Core.Handling
 {
-    public interface IMethodHandlerFactory<TRequest, TResponse> 
+    public interface IMethodHandlerProvider<TRequest, TResponse> 
         where TRequest : class 
         where TResponse : class
     {

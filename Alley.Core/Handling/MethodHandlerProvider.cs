@@ -1,16 +1,14 @@
-﻿using System;
-using Alley.Core.Handling;
-using Grpc.Core;
+﻿using Grpc.Core;
 
-namespace Alley.Core.Factories
+namespace Alley.Core.Handling
 {
-    public class MethodHandlerFactory<TRequest, TResponse> : IMethodHandlerFactory<TRequest, TResponse>
+    public class MethodHandlerProvider<TRequest, TResponse> : IMethodHandlerProvider<TRequest, TResponse>
         where TRequest : class
         where TResponse : class
     {
         private readonly ISessionFactory<TRequest, TResponse> _sessionFactory;
 
-        public MethodHandlerFactory(
+        public MethodHandlerProvider(
             ISessionFactory<TRequest, TResponse> sessionFactory)
         {
             _sessionFactory = sessionFactory;
@@ -40,7 +38,7 @@ namespace Alley.Core.Factories
             {
                 var connection = _sessionFactory.CreateSession(context.Method, MethodType.ServerStreaming);
                 await connection.Execute(request, responseStream, context);
-            };        
+            };
         }
 
         public DuplexStreamingServerMethod<TRequest, TResponse> GetDuplexStreamingServerHandler()
