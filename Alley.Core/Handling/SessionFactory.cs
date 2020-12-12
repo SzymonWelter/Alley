@@ -1,6 +1,7 @@
 ﻿using Alley.Context;
 using Alley.Context.LoadBalancing;
 using Alley.Definitions.Mappers.Interfaces;
+using Alley.Utils.Configuration;
 using Alley.Utils.Helpers;
 using Grpc.Core;
 
@@ -14,14 +15,17 @@ namespace Alley.Core.Handling
         private readonly IMethodFactory<TRequest, TResponse> _methodFactory;
         private readonly IMetricRepository _metricRepository;
         private readonly IChannelProvider _channelProvider;
+        private readonly IConfigurationProvider _configurationProvider;
 
         public SessionFactory(
             IConnectionTargetProvider connectionTargetProvider,
             IMethodFactory<TRequest, TResponse> methodFactory,
             IMetricRepository metricRepository, 
-            IChannelProvider channelProvider)
+            IChannelProvider channelProvider,
+            IConfigurationProvider configurationProvider)
         {
             _connectionTargetProvider = connectionTargetProvider;
+            _configurationProvider = configurationProvider;
             _methodFactory = methodFactory;
             _metricRepository = metricRepository;
             _channelProvider = channelProvider;
@@ -37,7 +41,7 @@ namespace Alley.Core.Handling
             var channelResult = _channelProvider.GetChannel(targetIpResult.Value);
             SessionHelper.HandleIfError(channelResult);
 
-            return new ConnectionSession<TRequest, TResponse>(channelResult.Value, method, _metricRepository);
+            return new ConnectionSession<TRequest, TResponse>(channelResult.Value, method, _metricRepository, _configurationProvider);
         }
     }
 }
