@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Alley.Definitions.Factories.Interfaces;
 using Alley.Definitions.Interfaces;
 using Alley.Definitions.Models;
@@ -10,14 +9,16 @@ using Alley.Utils.Models;
 
 namespace Alley.Definitions
 {
-    internal class MicroserviceDefinitionBuilder : IMicroserviceDefinitionBuilder
+    public class MicroserviceDefinitionBuilder : IMicroserviceDefinitionBuilder
     {
         private readonly IMicroserviceDescriptor _microserviceDescriptor;
         private readonly ITextReaderFactory _textReaderFactory;
         private readonly IAlleyLogger _logger;
 
-        public MicroserviceDefinitionBuilder(IMicroserviceDescriptor microserviceDescriptor,
-            ITextReaderFactory textReaderFactory, IAlleyLogger logger)
+        public MicroserviceDefinitionBuilder(
+            IMicroserviceDescriptor microserviceDescriptor,
+            ITextReaderFactory textReaderFactory, 
+            IAlleyLogger logger)
         {
             _microserviceDescriptor = microserviceDescriptor;
             _textReaderFactory = textReaderFactory;

@@ -17,7 +17,7 @@ namespace Alley.Core.Handling
         private readonly Method<TRequest, TResponse> _method;
         private readonly ChannelBase _channel;
         private readonly string _target;
-        private IConfigurationProvider _configurationProvider;
+        private readonly IConfigurationProvider _configurationProvider;
 
         public ConnectionSession(
             ChannelBase channel, 
