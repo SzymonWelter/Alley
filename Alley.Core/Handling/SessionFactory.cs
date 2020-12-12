@@ -1,6 +1,6 @@
 ﻿using Alley.Context;
-using Alley.Context.LoadBalancing;
 using Alley.Definitions.Mappers.Interfaces;
+using Alley.LoadBalancing;
 using Alley.Utils.Configuration;
 using Alley.Utils.Helpers;
 using Grpc.Core;

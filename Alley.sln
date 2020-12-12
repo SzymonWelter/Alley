@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.Serialization", "Alle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.Context.Tests", "Alley.Context.Tests\Alley.Context.Tests.csproj", "{1155E599-4310-4CCD-8AEE-9F612D936A32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.LoadBalancing", "Alley.LoadBalancing\Alley.LoadBalancing.csproj", "{C3F31B94-9330-4398-AF30-2BB151395763}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,18 @@ Global
 		{1155E599-4310-4CCD-8AEE-9F612D936A32}.Release|x64.Build.0 = Release|Any CPU
 		{1155E599-4310-4CCD-8AEE-9F612D936A32}.Release|x86.ActiveCfg = Release|Any CPU
 		{1155E599-4310-4CCD-8AEE-9F612D936A32}.Release|x86.Build.0 = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|x64.Build.0 = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Debug|x86.Build.0 = Debug|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|x64.Build.0 = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|x86.ActiveCfg = Release|Any CPU
+		{C3F31B94-9330-4398-AF30-2BB151395763}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

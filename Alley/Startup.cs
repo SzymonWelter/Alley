@@ -34,6 +34,8 @@ namespace Alley
             }
 
             _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5001"));
+            _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5002"));
+            _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5003"));
 
             var server = _serverBuilder
                 .EnableHttp()

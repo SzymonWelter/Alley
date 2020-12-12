@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Alley.Context;
 using Alley.Context.Factories;
-using Alley.Context.LoadBalancing;
 using Alley.Core;
 using Alley.Core.Handling;
 using Alley.Definitions;
@@ -13,6 +12,8 @@ using Alley.Definitions.Mappers;
 using Alley.Definitions.Mappers.Interfaces;
 using Alley.Definitions.Wrappers;
 using Alley.Definitions.Wrappers.Interfaces;
+using Alley.LoadBalancing;
+using Alley.LoadBalancing.Strategies;
 using Alley.Serialization.Models;
 using Alley.Utils;
 using Google.Protobuf.Reflection;

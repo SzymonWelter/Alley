@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Alley.Context\Alley.Context.csproj" />
       <ProjectReference Include="..\Alley.Definitions\Alley.Definitions.csproj" />
+      <ProjectReference Include="..\Alley.LoadBalancing\Alley.LoadBalancing.csproj" />
       <ProjectReference Include="..\Alley.Utils\Alley.Utils.csproj" />
     </ItemGroup>
 

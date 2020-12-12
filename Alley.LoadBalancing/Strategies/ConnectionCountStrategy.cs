@@ -6,13 +6,8 @@ using Alley.Context.Models.Interfaces;
 using Alley.Utils;
 using Alley.Utils.Models;
 
-namespace Alley.Context.LoadBalancing
+namespace Alley.LoadBalancing.Strategies
 {
-    public interface ILoadBalancingStrategy
-    {
-        Result<Uri> Execute(IEnumerable<IReadonlyMicroserviceInstance> instances);
-    }
-
     public class ConnectionCountStrategy : ILoadBalancingStrategy
     {
         public Result<Uri> Execute(IEnumerable<IReadonlyMicroserviceInstance> instances)
