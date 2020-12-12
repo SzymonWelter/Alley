@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Alley.Definitions.Models.Interfaces;
+using Alley.Utils.Helpers;
 using Google.Protobuf.Reflection;
 
 namespace Alley.Definitions.Models
@@ -12,7 +13,7 @@ namespace Alley.Definitions.Models
         
         public GrpcServiceDefinition(ServiceDescriptorProto serviceDescriptor, string package)
         {
-            Name = $"{package}.{serviceDescriptor.Name}";
+            Name = FormatHelper.FormatServiceFullName(package, serviceDescriptor.Name);
             Methods = serviceDescriptor.Methods.Select(m => new GrpcMethodDefinition(Name, m));
         }
     }
