@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using Alley.Core.Factories;
+using Alley.Core.Handling;
 using Alley.Definitions.Mappers.Interfaces;
 using Alley.Definitions.Models.Interfaces;
 using Grpc.Core;
@@ -12,17 +12,17 @@ namespace Alley.Core
         where TRequest : class 
         where TResponse : class
     {
-        private readonly IMethodHandlerFactory<TRequest, TResponse> _methodHandlerFactory;
+        private readonly IMethodHandlerProvider<TRequest, TResponse> _methodHandlerProvider;
         private readonly IMethodFactory<TRequest, TResponse> _methodFactory;
         private readonly Server _server;
         private bool _httpEnabled;
 
         public GrpcServerBuilder(
-            IMethodHandlerFactory<TRequest, TResponse> methodHandlerFactory,
+            IMethodHandlerProvider<TRequest, TResponse> methodHandlerProvider,
             IMethodFactory<TRequest, TResponse> methodFactory
         )
         {
-            _methodHandlerFactory = methodHandlerFactory;
+            _methodHandlerProvider = methodHandlerProvider;
             _methodFactory = methodFactory;
             _server = new Server();
         }
@@ -55,19 +55,19 @@ namespace Alley.Core
             switch(method.Type)
             {
                 case MethodType.Unary:
-                    var unaryHandler = _methodHandlerFactory.GetUnaryHandler();
+                    var unaryHandler = _methodHandlerProvider.GetUnaryHandler();
                     serverServiceDefinitionBuilder.AddMethod(method, unaryHandler);
                     break;
                 case MethodType.ClientStreaming:
-                    var clientStreamingHandler = _methodHandlerFactory.GetClientStreamingServerHandler();
+                    var clientStreamingHandler = _methodHandlerProvider.GetClientStreamingServerHandler();
                     serverServiceDefinitionBuilder.AddMethod(method, clientStreamingHandler);
                     break;
                 case MethodType.ServerStreaming:
-                    var serverStreamingHandler = _methodHandlerFactory.GetServerStreamingServerHandler();
+                    var serverStreamingHandler = _methodHandlerProvider.GetServerStreamingServerHandler();
                     serverServiceDefinitionBuilder.AddMethod(method, serverStreamingHandler);
                     break;
                 case MethodType.DuplexStreaming:
-                    var duplexStreamingServerHandler = _methodHandlerFactory.GetDuplexStreamingServerHandler();
+                    var duplexStreamingServerHandler = _methodHandlerProvider.GetDuplexStreamingServerHandler();
                     serverServiceDefinitionBuilder.AddMethod(method, duplexStreamingServerHandler);
                     break;
                 default:
