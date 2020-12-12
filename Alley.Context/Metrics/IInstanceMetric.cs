@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Alley.Context.Providers
+namespace Alley.Context.Metrics
 {
     public interface IInstanceMetric : IComparable<IInstanceMetric>
     {
-        public string Name { get;}
         public double Value { get; }
+        public MetricType Type { get; }
     }
 }
