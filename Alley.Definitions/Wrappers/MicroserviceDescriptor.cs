@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Alley.Definitions.Interfaces;
 using Alley.Definitions.Models;
 using Alley.Definitions.Models.Interfaces;
 using Alley.Definitions.Wrappers.Interfaces;
@@ -12,7 +11,7 @@ using Google.Protobuf.Reflection;
 
 namespace Alley.Definitions.Wrappers
 {
-    internal class MicroserviceDescriptor : IMicroserviceDescriptor
+    public class MicroserviceDescriptor : IMicroserviceDescriptor
     {
         private readonly IFileDescriptorSet _fileDescriptorSet;
 
