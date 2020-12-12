@@ -44,8 +44,9 @@ namespace Alley.Utils
 
         private string GetErrorMessage(string errorMessage)
         {
+            var stackTrace = string.Empty;
 #if DEBUG
-            var stackTrace = new StackTrace(1).ToString();
+            stackTrace = new StackTrace(1).ToString();
 #endif
 
             return $"Error occured: {errorMessage} {stackTrace}";
