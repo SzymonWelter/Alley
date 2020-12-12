@@ -2,7 +2,7 @@
 {
     public class AlleyMessageModel : IAlleyMessageModel
     {
-        public byte[] Content { get; set; }
+        public byte[] Content { get; }
 
         public AlleyMessageModel(byte[] content)
         {
