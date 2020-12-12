@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
 using Alley.Definitions;
+using Alley.Definitions.Factories.Interfaces;
 using Alley.Definitions.Interfaces;
 using Alley.Definitions.Models.Interfaces;
 using Alley.Utils.Configuration;
@@ -14,14 +15,17 @@ namespace Alley.Tests
         private readonly MicroservicesDefinitionsProvider _sut;
         private readonly IConfigurationProvider _configurationProvider;
         private readonly IMicroserviceDefinitionBuilder _microserviceBuilder;
+        private readonly IMicroserviceDefinitionBuilderFactory _microserviceBuilderFactory;
         private static readonly int DirectoriesCount = 3;
         private static readonly int FilesCount = 5;
 
         public MicroservicesDefinitionsProviderTests()
         {
+            _microserviceBuilderFactory = Substitute.For<IMicroserviceDefinitionBuilderFactory>();
             _microserviceBuilder = Substitute.For<IMicroserviceDefinitionBuilder>();
+            _microserviceBuilderFactory.Create().Returns(_microserviceBuilder);
             _configurationProvider = Substitute.For<IConfigurationProvider>();
-            _sut = new MicroservicesDefinitionsProvider(_microserviceBuilder, _configurationProvider);
+            _sut = new MicroservicesDefinitionsProvider(_microserviceBuilderFactory, _configurationProvider);
         }
 
         [Fact]

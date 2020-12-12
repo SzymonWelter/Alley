@@ -43,7 +43,7 @@ namespace Alley.Definitions.Wrappers
 
         private IEnumerable<IGrpcServiceDefinition> GetServicesFromProto(FileDescriptorProto file)
         {
-            return file.Services.Select(s => new GrpcServiceDefinition(s));
+            return file.Services.Select(s => new GrpcServiceDefinition(s, file.Package));
         }
     }
 }
