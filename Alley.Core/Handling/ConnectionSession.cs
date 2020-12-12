@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Alley.Context;
 using Alley.Context.Metrics;
+using Alley.Utils.Configuration;
 using Alley.Utils.Helpers;
 using Alley.Utils.Models;
 using Grpc.Core;
@@ -16,16 +17,19 @@ namespace Alley.Core.Handling
         private readonly Method<TRequest, TResponse> _method;
         private readonly ChannelBase _channel;
         private readonly string _target;
+        private IConfigurationProvider _configurationProvider;
 
         public ConnectionSession(
             ChannelBase channel, 
             Method<TRequest, TResponse> method, 
-            IMetricRepository metricRepository)
+            IMetricRepository metricRepository,
+            IConfigurationProvider configurationProvider)
         {
             _channel = channel;
             _method = method;
             _metricRepository = metricRepository;
-            _target = SessionHelper.FormatTarget(_channel.Target);
+            _configurationProvider = configurationProvider;
+            _target = FormatTarget(_channel.Target);
         }
 
         public async Task<TResponse> Execute(TRequest request, ServerCallContext context)
@@ -168,6 +172,13 @@ namespace Alley.Core.Handling
                 return Result.Failure(e.Message);
             }
             return Result.Success();
+        }
+        
+        private string FormatTarget(string channelTarget)
+        {
+            var protocol = _configurationProvider.Protocol;
+            
+            return $"{protocol}://{channelTarget}";
         }
     }
 }
