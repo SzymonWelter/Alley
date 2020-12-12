@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Alley.Context.Metrics;
-using Alley.Context.Models;
 using Alley.Context.Models.Interfaces;
 using Alley.Utils.Models;
 using Grpc.Core;
