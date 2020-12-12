@@ -1,4 +1,6 @@
-﻿namespace Alley.Utils.Models
+﻿using System;
+
+namespace Alley.Utils.Models
 {
     public class Result<T> : ResultBase<T>
     {
@@ -6,6 +8,7 @@
         {
             IsSuccess = true;
             Value = value;
+            Message = string.Empty;
         }
 
         private Result(string errorMessage)
@@ -33,7 +36,7 @@
             Message = message;
         }
 
-        public static IResult Success(string message = null, bool handled = false)
+        public static IResult Success(string message = "", bool handled = false)
         {
             return new Result(true, message) {IsHandled = handled};
         }
