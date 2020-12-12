@@ -1,8 +1,7 @@
-﻿using Grpc.Core;
-using Alley.Definitions.Models;
-using Alley.Definitions.Models.Interfaces;
+﻿using Alley.Serialization.Models;
+using Grpc.Core;
 
-namespace Alley.Core.Serialization
+namespace Alley.Serialization
 {
     public static class AlleyMessageSerializer
     {
