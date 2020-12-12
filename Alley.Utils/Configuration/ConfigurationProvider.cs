@@ -7,16 +7,26 @@ namespace Alley.Utils.Configuration
     public class ConfigurationProvider : IConfigurationProvider
     {
         private readonly IConfiguration _configuration;
+        private const string ProtosLocalizationPath = "Protos:Localization";
+        private const string ProtocolPath = "Protocol";
         public string ProtoPattern => "*.proto";
+        public string Protocol { get; }
 
         public ConfigurationProvider(IConfiguration configuration)
         {
             _configuration = configuration;
+            Protocol = ParseProtocol();
+        }
+
+        private string ParseProtocol()
+        {
+            var protocolText = _configuration[ProtocolPath];
+            return protocolText == "https" ? "https" : "http";
         }
 
         public IDirectoryInfo GetProtosLocalization()
         {
-            var path = _configuration["Protos:Localization"];
+            var path = _configuration[ProtosLocalizationPath];
             var directoryInfo = new DirectoryInfo(path);
             var fileSystem = new FileSystem();
             return new DirectoryInfoWrapper(fileSystem, directoryInfo);

@@ -6,5 +6,6 @@ namespace Alley.Utils.Configuration
     {
         IDirectoryInfo GetProtosLocalization();
         string ProtoPattern { get; }
+        string Protocol { get; }
     }
 }
