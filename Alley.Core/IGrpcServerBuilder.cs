@@ -10,8 +10,8 @@ namespace Alley.Core
         GrpcServerBuilder<TRequest, TResponse> AddServices(IEnumerable<IGrpcServiceDefinition> serviceDefinitions);
         GrpcServerBuilder<TRequest, TResponse> AddService(IGrpcServiceDefinition serviceDefinition);
         AlleyServer Build();
-        GrpcServerBuilder<TRequest, TResponse> EnableHttp();
-        GrpcServerBuilder<TRequest, TResponse> ConfigurePort(int port);
+        IGrpcServerBuilder<TRequest, TResponse> EnableHttp();
+        IGrpcServerBuilder<TRequest, TResponse> ConfigurePort(int port);
         void ConfigurePorts(ServerPort serverPort);
     }
 }
