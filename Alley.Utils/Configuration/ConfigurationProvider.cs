@@ -7,8 +7,9 @@ namespace Alley.Utils.Configuration
     public class ConfigurationProvider : IConfigurationProvider
     {
         private readonly IConfiguration _configuration;
-        private const string ProtosLocalizationPath = "Protos:Localization";
+        private const string ProtosPath = "Protos:Localization";
         private const string ProtocolPath = "Protocol";
+
         public string ProtoPattern => "*.proto";
         public string Protocol { get; }
 
@@ -24,13 +25,12 @@ namespace Alley.Utils.Configuration
             return protocolText == "https" ? "https" : "http";
         }
 
-        public IDirectoryInfo GetProtosLocalization()
+        public IDirectoryInfo GetProtosPath()
         {
-            var path = _configuration[ProtosLocalizationPath];
+            var path = _configuration[ProtosPath];
             var directoryInfo = new DirectoryInfo(path);
             var fileSystem = new FileSystem();
             return new DirectoryInfoWrapper(fileSystem, directoryInfo);
         }
-
     }
 }
