@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.LoadBalancing", "Alle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.LoadBalancing.Tests", "Alley.LoadBalancing.Tests\Alley.LoadBalancing.Tests.csproj", "{C3FC2874-5477-4067-B624-1270C70B9DA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alley.Management", "Alley.Management\Alley.Management.csproj", "{808DF864-59EE-4443-BBF6-9D15D843CBFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,18 @@ Global
 		{C3FC2874-5477-4067-B624-1270C70B9DA0}.Release|x64.Build.0 = Release|Any CPU
 		{C3FC2874-5477-4067-B624-1270C70B9DA0}.Release|x86.ActiveCfg = Release|Any CPU
 		{C3FC2874-5477-4067-B624-1270C70B9DA0}.Release|x86.Build.0 = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|x64.Build.0 = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Debug|x86.Build.0 = Debug|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|x64.ActiveCfg = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|x64.Build.0 = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{808DF864-59EE-4443-BBF6-9D15D843CBFA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
