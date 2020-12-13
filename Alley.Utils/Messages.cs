@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Alley.Utils
 {
@@ -71,5 +72,9 @@ namespace Alley.Utils
 
         public static string CanNotExecuteLoadBalancingStrategyForZeroAvailableInstances() =>
             "Can not execute load balancing strategy for zero available instances";
+
+        public static string CanNotFindSuitableTarget(IEnumerable<object> instances) =>
+            $"Can not find suitable targets: {string.Join(" | ", instances)}";
+
     }
 }

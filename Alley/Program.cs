@@ -56,7 +56,7 @@ namespace Alley
                     SessionFactory<IAlleyMessageModel, IAlleyMessageModel>>();
             
             serviceCollection.AddSingleton<IConnectionTargetProvider, LoadBalancingManager>();
-            serviceCollection.AddSingleton<ILoadBalancingStrategy, ConnectionCountStrategy>();
+            serviceCollection.AddSingleton<ILoadBalancingStrategy, ActiveConnectionCountStrategy>();
 
             serviceCollection.AddSingleton<MicroserviceContext>();
             serviceCollection.AddSingleton<IMicroserviceContext>(x => x.GetRequiredService<MicroserviceContext>());
