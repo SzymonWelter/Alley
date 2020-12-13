@@ -7,13 +7,18 @@ using Grpc.Core;
 
 namespace Alley.Context
 {
-    public interface IMicroserviceContext : IReadonlyInstanceContext, IMetricRepository, IChannelProvider
+    public interface IMicroserviceContext : IContextManagement, IReadonlyInstanceContext, IChannelProvider
+    {
+    }
+
+    public interface IContextManagement : IMetricRepository
     {
         IResult RegisterMicroservice(string microserviceName, IEnumerable<string> servicesNames);
         IResult UnregisterMicroservice(string microserviceName);
 
         IResult RegisterInstance(string microserviceName, Uri microserviceInstance);
         IResult UnregisterInstance(Uri instanceUri);
+        
     }
 
     public interface IReadonlyInstanceContext
