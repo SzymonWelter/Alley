@@ -58,7 +58,7 @@ namespace Alley.Context.Tests
         private int GetExpectedResult(double anotherActiveConnections)
         {
             return _sut.Value == anotherActiveConnections ? 0 : 
-                _sut.Value < anotherActiveConnections ? 1 : -1;
+                _sut.Value > anotherActiveConnections ? 1 : -1;
         }
     }
 }

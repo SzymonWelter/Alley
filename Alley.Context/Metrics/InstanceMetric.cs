@@ -19,7 +19,7 @@ namespace Alley.Context.Metrics
             {
                 throw new ArgumentException(Messages.CanNotCompareMetrics(this, other));
             }
-            return other.Value.CompareTo(Value);
+            return Value.CompareTo(other.Value);
         }
 
         public override string ToString()
