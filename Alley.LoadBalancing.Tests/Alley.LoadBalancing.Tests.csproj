@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -14,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Alley.Context\Alley.Context.csproj" />
+        <ProjectReference Include="..\Alley.LoadBalancing\Alley.LoadBalancing.csproj" />
     </ItemGroup>
 
 </Project>

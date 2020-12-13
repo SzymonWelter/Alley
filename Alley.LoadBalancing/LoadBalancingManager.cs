@@ -1,7 +1,9 @@
 ﻿using System;
+using Alley.Context;
+using Alley.LoadBalancing.Strategies;
 using Alley.Utils.Models;
 
-namespace Alley.Context.LoadBalancing
+namespace Alley.LoadBalancing
 {
     public class LoadBalancingManager : IConnectionTargetProvider
     {
