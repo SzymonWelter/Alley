@@ -76,5 +76,10 @@ namespace Alley.Utils
         public static string CanNotFindSuitableTarget(IEnumerable<object> instances) =>
             $"Can not find suitable targets: {string.Join(" | ", instances)}";
 
+        public static string ConnectionStartedWith(string target) =>
+            $"Connection started with {target}";
+
+        public static string ConnectionEndedWith(string target) =>
+            $"Connection ended with {target}";
     }
 }
