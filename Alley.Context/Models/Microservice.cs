@@ -46,7 +46,7 @@ namespace Alley.Context.Models
         {
             var uri = microServiceInstance?.Uri;
             return uri != null && _instances.TryAdd(uri, microServiceInstance) ? 
-                Result.Success(Messages.InstanceSuccessfullyRegistered(uri)) : 
+                Result.Success(Messages.InstanceSuccessfullyRegistered(microServiceInstance)) : 
                 Result.Failure(Messages.CanNotRegisterInstance(microServiceInstance));
         }
 
@@ -61,8 +61,8 @@ namespace Alley.Context.Models
             {
                 return Result.Failure(Messages.CanNotUnregisterNotExistingInstance(instanceUri, Name));
             }
-            _instances.Remove(instanceUri);
-            return Result.Success(Messages.InstanceSuccessfullyUnregistered(instanceUri));
+            _instances.Remove(instanceUri, out var removedInstance);
+            return Result.Success(Messages.InstanceSuccessfullyUnregistered(removedInstance));
         }
 
         public IResult<IEnumerable<Uri>> UnregisterAllInstances()

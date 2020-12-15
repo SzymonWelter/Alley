@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Alley.Context.Factories;
+using Alley.Context.Models;
 using Alley.Context.Models.Interfaces;
 using Alley.Utils;
 using Alley.Utils.Models;
@@ -215,7 +216,7 @@ namespace Alley.Context.Tests
             // Arrange
             var microserviceName = "test";
             var uri = new Uri($"{Uri.UriSchemeHttp}://{microserviceName}");
-            var expectedMessage = Messages.InstanceAlreadyRegistered(uri);
+            var expectedMessage = Messages.InstanceAlreadyRegistered(microserviceName, uri);
             _instances.ContainsKey(uri).Returns(true);
 
             // Act
@@ -318,10 +319,9 @@ namespace Alley.Context.Tests
             // Arrange
             var uri = new Uri($"{Uri.UriSchemeHttp}://test");
             const string microserviceName = "Microservice";
-            var instance = Substitute.For<IMicroserviceInstance>();
-            instance.MicroServiceName.Returns(microserviceName);
+            var instance = new MicroserviceInstance(microserviceName, uri);
             var microservice = Substitute.For<IMicroservice>();
-            var expectedMessage = Messages.InstanceSuccessfullyUnregistered(uri);
+            var expectedMessage = Messages.InstanceSuccessfullyUnregistered(instance);
             _instances.Remove(uri, out _).Returns(x =>
             {
                 x[1] = instance;

@@ -158,7 +158,7 @@ namespace Alley.Context
             }
             if (_instances.ContainsKey(uri))
             {
-                var message = Messages.InstanceAlreadyRegistered(uri);
+                var message = Messages.InstanceAlreadyRegistered(microserviceName, uri);
                 _logger.Error(message);
                 return Result.Failure(message);
             }
@@ -197,7 +197,7 @@ namespace Alley.Context
                 return Result.Failure(Messages.MicroserviceDoesntExistMessage(removedInstance.MicroServiceName));
             }
             microservice.UnregisterInstance(instanceUri);
-            return Result.Success(Messages.InstanceSuccessfullyUnregistered(instanceUri));
+            return Result.Success(Messages.InstanceSuccessfullyUnregistered(removedInstance));
         }
 
         public IResult<ChannelBase> GetChannel(Uri uri)

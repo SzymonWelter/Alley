@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Alley.Context.Metrics;
 using Alley.Context.Models.Interfaces;
@@ -14,12 +15,14 @@ namespace Alley.Context.Models
         public IDictionary<MetricType, IInstanceMetric> Metrics { get; }
         IEnumerable<KeyValuePair<MetricType, IInstanceMetric>> IReadonlyMicroserviceInstance.Metrics => Metrics;
         private GrpcChannel _channel;
-        
+
+        public MicroserviceInstance(string microServiceName, Uri uri) : 
+            this(microServiceName, uri, new Dictionary<MetricType, IInstanceMetric>()){}
         public MicroserviceInstance(string microServiceName, Uri uri, IDictionary<MetricType, IInstanceMetric> metrics)
         {
             MicroServiceName = microServiceName;
             Uri = uri;
-            Metrics = metrics;
+            Metrics = metrics ?? new ConcurrentDictionary<MetricType, IInstanceMetric>();
         }
         
         public GrpcChannel GetChannel()
