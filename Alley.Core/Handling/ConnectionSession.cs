@@ -119,9 +119,11 @@ namespace Alley.Core.Handling
                 using var streamSource = result.Value;
                 var requestRewriteTask = RewriteStream(requestStream, streamSource.RequestStream);
                 var responseRewriteTask = RewriteStream(streamSource.ResponseStream, responseStream);
-                await Task.WhenAll(requestRewriteTask, responseRewriteTask);
-                SessionHelper.HandleIfError(await requestRewriteTask, _logger);
-                SessionHelper.HandleIfError(await responseRewriteTask, _logger);
+
+                await Task.WhenAny(requestRewriteTask, responseRewriteTask);
+                await streamSource.RequestStream.CompleteAsync();
+                SessionHelper.HandleIfError(await requestRewriteTask);
+                SessionHelper.HandleIfError(await responseRewriteTask);
             }
             finally
             {
