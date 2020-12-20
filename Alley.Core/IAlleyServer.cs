@@ -4,6 +4,6 @@ namespace Alley.Core
 {
     public interface IAlleyServer
     {
-        Task Run();
+        void Run();
     }
 }

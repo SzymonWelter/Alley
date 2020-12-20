@@ -4,7 +4,7 @@ namespace Alley.Utils.Configuration
 {
     public interface IConfigurationProvider
     {
-        IDirectoryInfo GetProtosLocalization();
+        IDirectoryInfo GetProtosPath();
         string ProtoPattern { get; }
         string Protocol { get; }
     }

@@ -38,7 +38,7 @@ namespace Alley.Tests
             localization.GetDirectories().Returns(directoriesInfo);
             localization.Name.Returns(localizationName);
             
-            _configurationProvider.GetProtosLocalization().Returns(localization);
+            _configurationProvider.GetProtosPath().Returns(localization);
 
             _microserviceBuilder.Build(default).ReturnsForAnyArgs(x => MockMicroserviceDefinition((string)x[0]));
 

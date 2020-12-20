@@ -11,10 +11,10 @@ namespace Alley.Core
         {
             _server = server;
         }
-        public Task Run()
+        public void Run()
         {
             _server.Start();
-            return _server.ShutdownTask;
+            _server.ShutdownTask.GetAwaiter().GetResult();
         }
     }
 }
