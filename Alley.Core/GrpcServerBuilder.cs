@@ -80,14 +80,14 @@ namespace Alley.Core
             return new AlleyServer(_server);
         }
 
-        public GrpcServerBuilder<TRequest, TResponse> EnableHttp()
+        public IGrpcServerBuilder<TRequest, TResponse> EnableHttp()
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
             _httpEnabled = true;
             return this;
         }
 
-        public GrpcServerBuilder<TRequest, TResponse> ConfigurePort(int port)
+        public IGrpcServerBuilder<TRequest, TResponse> ConfigurePort(int port)
         {
             var serverPort = new ServerPort(
                 IPAddress.Any.ToString(),
