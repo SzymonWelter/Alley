@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Alley.Context;
 using Alley.Context.Metrics;
+using Alley.Utils;
 using Alley.Utils.Configuration;
 using Alley.Utils.Helpers;
 using Alley.Utils.Models;
@@ -16,19 +17,21 @@ namespace Alley.Core.Handling
         private readonly IMetricRepository _metricRepository;
         private readonly Method<TRequest, TResponse> _method;
         private readonly ChannelBase _channel;
-        private readonly string _target;
         private readonly IConfigurationProvider _configurationProvider;
+        private readonly IAlleyLogger _logger;
+        private readonly string _target;
 
-        public ConnectionSession(
-            ChannelBase channel, 
-            Method<TRequest, TResponse> method, 
+        public ConnectionSession(ChannelBase channel,
+            Method<TRequest, TResponse> method,
             IMetricRepository metricRepository,
-            IConfigurationProvider configurationProvider)
+            IConfigurationProvider configurationProvider, 
+            IAlleyLogger logger)
         {
             _channel = channel;
             _method = method;
             _metricRepository = metricRepository;
             _configurationProvider = configurationProvider;
+            _logger = logger;
             _target = FormatTarget(_channel.Target);
         }
 
@@ -42,15 +45,16 @@ namespace Alley.Core.Handling
                     CallOptionsHelper.Rewrite(context),
                     request));
                 var response = await result.Value;
-                SessionHelper.HandleIfError(result);
+                SessionHelper.HandleIfError(result, _logger);
 
                 return response;
             }
             finally
             {
-                DecreaseActiveConnectionCount();
+                FinalizeConnection();
             }
         }
+
 
 
         public async Task<TResponse> Execute(IAsyncStreamReader<TRequest> requestStream, ServerCallContext context)
@@ -63,18 +67,18 @@ namespace Alley.Core.Handling
                     _target,
                     CallOptionsHelper.Rewrite(context)));
 
-                SessionHelper.HandleIfError(result);
+                SessionHelper.HandleIfError(result, _logger);
                 
                 using var streamingCall = result.Value;
                 var rewriteResult = await RewriteStream(requestStream, streamingCall.RequestStream);
                 await streamingCall.RequestStream.CompleteAsync();
                 var response = await streamingCall.ResponseAsync;
-                SessionHelper.HandleIfError(rewriteResult);
+                SessionHelper.HandleIfError(rewriteResult, _logger);
                 return response;
             }
             finally
             {
-                DecreaseActiveConnectionCount();
+                FinalizeConnection();
             }
         }
 
@@ -89,15 +93,15 @@ namespace Alley.Core.Handling
                     _target,
                     CallOptionsHelper.Rewrite(context),
                     request));
-                SessionHelper.HandleIfError(result);
+                SessionHelper.HandleIfError(result, _logger);
                 
                 using var serverStreamingCall = result.Value;
                 var rewriteResult = await RewriteStream(serverStreamingCall.ResponseStream, responseStream);
-                SessionHelper.HandleIfError(rewriteResult);
+                SessionHelper.HandleIfError(rewriteResult, _logger);
             }
             finally
             {
-                DecreaseActiveConnectionCount();
+                FinalizeConnection();
             }
         }
 
@@ -110,18 +114,20 @@ namespace Alley.Core.Handling
                     _method,
                     _target,
                     CallOptionsHelper.Rewrite(context)));
-                SessionHelper.HandleIfError(result);
+                SessionHelper.HandleIfError(result, _logger);
 
                 using var streamSource = result.Value;
                 var requestRewriteTask = RewriteStream(requestStream, streamSource.RequestStream);
                 var responseRewriteTask = RewriteStream(streamSource.ResponseStream, responseStream);
-                await Task.WhenAll(requestRewriteTask, responseRewriteTask);
+
+                await Task.WhenAny(requestRewriteTask, responseRewriteTask);
+                await streamSource.RequestStream.CompleteAsync();
                 SessionHelper.HandleIfError(await requestRewriteTask);
                 SessionHelper.HandleIfError(await responseRewriteTask);
             }
             finally
             {
-                DecreaseActiveConnectionCount();
+                FinalizeConnection();
             }
         }
 
@@ -129,6 +135,7 @@ namespace Alley.Core.Handling
         {
             try
             {
+                _logger.Information(Messages.ConnectionStartedWith(_target));
                 var callInvoker = _channel.CreateCallInvoker();
                 var result = call(callInvoker);
                 return Result<T>.Success(result);
@@ -138,11 +145,15 @@ namespace Alley.Core.Handling
                 return Result<T>.Failure(e.Message);
             }
         }
+        private void FinalizeConnection()
+        {
+            DecreaseActiveConnectionCount();
+            _logger.Information(Messages.ConnectionEndedWith(_target));
+        }
         
         private void IncreaseActiveConnectionCount()
         {
             UpdateActiveConnectionCount(1);
-
         }
         
         private void DecreaseActiveConnectionCount()
