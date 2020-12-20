@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Alley.Core\Alley.Core.csproj" />
+    <ProjectReference Include="..\Alley.Monitoring\Alley.Monitoring.csproj" />
   </ItemGroup>
 
 </Project>

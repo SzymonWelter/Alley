@@ -14,6 +14,7 @@ using Alley.Definitions.Wrappers;
 using Alley.Definitions.Wrappers.Interfaces;
 using Alley.LoadBalancing;
 using Alley.LoadBalancing.Strategies;
+using Alley.Monitoring;
 using Alley.Serialization.Models;
 using Alley.Utils;
 using Google.Protobuf.Reflection;
@@ -46,6 +47,7 @@ namespace Alley
                 .WriteTo.Console()
                 .CreateLogger();
             serviceCollection.AddSingleton<ILogger>(logger);
+            serviceCollection.AddSingleton<IMetricFetcher, MetricFetcher>();
             serviceCollection
                 .AddSingleton<
                     ISessionFactory<IAlleyMessageModel, IAlleyMessageModel>,
