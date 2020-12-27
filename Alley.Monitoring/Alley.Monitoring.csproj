@@ -2,6 +2,16 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RuntimeIdentifiers>win10-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Alley.Context\Alley.Context.csproj" />
+      <ProjectReference Include="..\Alley.Utils\Alley.Utils.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    </ItemGroup>
 
 </Project>

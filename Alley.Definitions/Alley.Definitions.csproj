@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RuntimeIdentifiers>win10-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Grpc.Core.Api" Version="2.31.0" />
+      <PackageReference Include="Grpc.Core.Api" Version="2.32.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0-preview.7.20364.11" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
       <PackageReference Include="protobuf-net.Reflection" Version="3.0.29" />
