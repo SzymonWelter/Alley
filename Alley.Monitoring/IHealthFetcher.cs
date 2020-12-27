@@ -1,7 +1,6 @@
 ﻿namespace Alley.Monitoring
 {
-    internal interface IHealthFetcher
+    public interface IHealthFetcher : IMetricFetcher
     {
-        
     }
 }
