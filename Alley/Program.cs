@@ -57,7 +57,7 @@ namespace Alley
                 .WriteTo.Console()
                 .CreateLogger();
             serviceCollection.AddSingleton<ILogger>(logger);
-            serviceCollection.AddSingleton<IMetricFetcher, MetricFetcher>();
+            serviceCollection.AddSingleton<IMonitoringDirector, MonitoringDirector>();
             serviceCollection
                 .AddSingleton<
                     ISessionFactory<IAlleyMessageModel, IAlleyMessageModel>,
@@ -77,11 +77,17 @@ namespace Alley
             serviceCollection.AddSingleton<IReadonlyInstanceContext>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IMetricRepository>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IChannelProvider>(x => x.GetRequiredService<MicroserviceContext>());
-            
+
+            serviceCollection.AddHttpClient<IHealthFetcher, HealthFetcher>( client =>
+            {
+                client.BaseAddress = new Uri(configuration["Metrics:BaseUrl"]);
+            });
             serviceCollection.AddTransient<
                 IGrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel>, 
                 GrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel>>();
             serviceCollection.AddTransient<IConfigurationProvider, ConfigurationProvider>();
+            serviceCollection.AddTransient<IHealthRegistration, HealthRegistration>();
+            serviceCollection.AddTransient<IMetricsRegistration, MetricsRegistration>();
             serviceCollection.AddTransient<IAlleyLogger, AlleyLogger>();
             serviceCollection.AddTransient<IMicroservicesDefinitionsProvider, MicroservicesDefinitionsProvider>();
             serviceCollection.AddTransient<IMicroserviceDefinitionBuilder, MicroserviceDefinitionBuilder>();
