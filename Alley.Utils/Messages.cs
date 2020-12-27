@@ -82,5 +82,8 @@ namespace Alley.Utils
 
         public static string ConnectionEndedWith(string target) =>
             $"Connection ended with {target}";
+
+        public static string MonitoringCrashed(string eMessage) =>
+            $"Monitoring crashed: {eMessage}";
     }
 }
