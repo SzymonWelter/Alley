@@ -12,75 +12,62 @@ namespace Alley.Monitoring
     {
         private readonly IHealthFetcher _healthFetcher;
         private readonly IContextManagement _contextManagement;
+        private readonly IMetricMetadataFactory _metadataFactory;
         private readonly IConfigurationProvider _configurationProvider;
 
         public HealthRegistration(
-            IHealthFetcher healthFetcher, 
-            IContextManagement contextManagement, 
+            IHealthFetcher healthFetcher,
+            IContextManagement contextManagement,
+            IMetricMetadataFactory metadataFactory,
             IConfigurationProvider configurationProvider)
         {
             _healthFetcher = healthFetcher;
             _contextManagement = contextManagement;
+            _metadataFactory = metadataFactory;
             _configurationProvider = configurationProvider;
         }
+
         public async Task Start()
         {
             while (true)
             {
                 await Task.Delay(_configurationProvider.HealthCheckTimeout);
-                
+
                 var oldInstances = GetOldInstances();
                 var result = await _healthFetcher.Fetch();
+
                 var currentInstances = GetInstancesFromResult(result);
                 var instancesToRegister = currentInstances.Except(oldInstances);
                 var instancesToUnregister = oldInstances.Except(currentInstances);
 
+
                 foreach (var instance in instancesToRegister)
                 {
-                    if(_contextManagement.MicroserviceExists(instance.Job))
-                        _contextManagement.RegisterInstance(instance.Job, GetUri(instance.Instance));
+                    if (_contextManagement.MicroserviceExists(instance.Job))
+                    {
+                        _contextManagement.RegisterInstance(instance.Job, new Uri(instance.Instance));
+                    }
                 }
 
                 foreach (var instance in instancesToUnregister)
                 {
-                    _contextManagement.UnregisterInstance(GetUri(instance.Instance));
+                    _contextManagement.UnregisterInstance(new Uri(instance.Instance));
                 }
             }
-        }
-        private static Uri GetUri(string instance)
-        {
-            return new Uri(instance);
         }
 
         private IEnumerable<MetricMetadata> GetOldInstances()
         {
-            return _contextManagement.GetInstances().Select(i => new MetricMetadata
-            {
-                Instance = i.Uri.OriginalString,
-                Job = i.MicroServiceName
-            });
+            return _contextManagement
+                .GetInstances()
+                .Select(_metadataFactory.GetFrom);
         }
 
         private IEnumerable<MetricMetadata> GetInstancesFromResult(MetricsSummary result)
         {
             return result.Data.Result
-                .Where(m => (int)m.Value[1] == 1)
-                .Select(m =>
-                {
-                    var instance = FormatInstance(m.Metric.Instance, m.Metric.Job);
-                    return new MetricMetadata
-                    {
-                        Instance = instance,
-                        Job = m.Metric.Job
-                    };
-                });
+                .Where(m => (int) m.Value[1] == 1)
+                .Select(_metadataFactory.GetFrom);
         }
-
-        private string FormatInstance(string metricInstance, string jobName)
-        {
-            var uri = new Uri($"{_configurationProvider.Protocol}://{metricInstance}");
-            return $"{uri.Scheme}://{uri.Host}:{_configurationProvider.GetPort(jobName)}";
-        }
-
     }
 }

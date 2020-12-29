@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Alley.Utils;
 using Alley.Utils.Configuration;
 
 namespace Alley.Monitoring
@@ -7,10 +8,12 @@ namespace Alley.Monitoring
     {
         public CpuUsageFetcher(
             HttpClient httpClient, 
-            IConfigurationProvider configurationProvider) : 
+            IConfigurationProvider configurationProvider,
+            IAlleyLogger logger) : 
             base(
                 httpClient, 
-                configurationProvider.CpuUsageQuery)
+                configurationProvider.CpuUsageQuery,
+                logger)
         {
         }
     }

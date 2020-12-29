@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Alley.Monitoring.Models;
+using Alley.Utils;
 using Newtonsoft.Json;
 
 namespace Alley.Monitoring
@@ -10,11 +11,13 @@ namespace Alley.Monitoring
     {
         private readonly HttpClient _httpClient;
         private readonly string _query;
+        private readonly IAlleyLogger _logger;
 
-        protected MetricFetcherBase(HttpClient httpClient, string query)
+        protected MetricFetcherBase(HttpClient httpClient, string query, IAlleyLogger logger)
         {
             _httpClient = httpClient;
             _query = query;
+            _logger = logger;
         }
 
         public virtual async Task<MetricsSummary> Fetch()
@@ -26,7 +29,7 @@ namespace Alley.Monitoring
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.Error(e.Message);
                 throw;
             }
         }
