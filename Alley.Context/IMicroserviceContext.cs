@@ -31,6 +31,7 @@ namespace Alley.Context
     public interface IMetricRepository
     {
         IResult UpdateMetric(Uri uri, MetricType metricType, Func<IInstanceMetric, IInstanceMetric> updateRecipe);
+        IResult AddOrUpdateMetric(Uri uri, IInstanceMetric metric);
     }
 
     public interface IChannelProvider
