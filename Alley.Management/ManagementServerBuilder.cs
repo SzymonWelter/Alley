@@ -23,7 +23,7 @@ namespace Alley.Management
                 .UseServiceProviderFactory(_serviceProviderFactory)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://localhost:8080");
+                    webBuilder.UseUrls("http://*:8080");
                     webBuilder.UseStartup<Startup>();
                 });
     }
