@@ -12,7 +12,7 @@ RUN for file in $(ls *.csproj); do mkdir -p ${file%.*}/ && mv $file ${file%.*}/;
 RUN dotnet restore -r linux-x64
 
 COPY . .
-RUN dotnet publish ./Alley -c release -r linux-x64 -o /out --no-restore
+RUN dotnet publish -c release -r linux-x64 -o /out --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:3.1
 EXPOSE 80
