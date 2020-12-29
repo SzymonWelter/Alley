@@ -23,6 +23,7 @@ namespace Alley.Utils.Configuration
         public string HealthCheckQuery { get; }
         public int HealthCheckTimeout { get; }
         public int GrpcServerPort { get; }
+        public int MetricsTimeout { get; }
         public int DefaultServicesPort { get; }
 
         public ConfigurationProvider(IConfiguration configuration)
@@ -31,7 +32,8 @@ namespace Alley.Utils.Configuration
             Protocol = ParseProtocol();
             CpuUsageQuery = ParseMetricQuery(CpuUsageSubPath);
             HealthCheckQuery = ParseMetricQuery(HealthCheckSubPath);
-            HealthCheckTimeout = ParseHealthCheckTimeout();
+            HealthCheckTimeout = ParseMetricTimeout();
+            MetricsTimeout = ParseMetricTimeout();
             GrpcServerPort = ParseGrpcServerPort();
             DefaultServicesPort = ParseDefaultServicesPort();
             _ports = ParsePorts();
@@ -40,7 +42,7 @@ namespace Alley.Utils.Configuration
 
         private int ParseDefaultServicesPort()
         {
-            var value = _configuration["Services:DefaultPort"];
+            var value = _configuration["Services:default:Port"];
             return int.TryParse(value, out var port) ? port : 80;
         }
 
@@ -63,7 +65,7 @@ namespace Alley.Utils.Configuration
 
         public int GetPort(string jobName)
         {
-            return _ports[jobName];
+            return _ports.TryGetValue(jobName, out var port) ? port : DefaultServicesPort;
         }
         
         private int ParseGrpcServerPort()
@@ -79,9 +81,9 @@ namespace Alley.Utils.Configuration
             return _configuration[path];
         }
 
-        private int ParseHealthCheckTimeout()
+        private int ParseMetricTimeout()
         {
-            var timeout = ParseMetric(HealthCheckSubPath, "Timeout");
+            var timeout = ParseMetric("default", "Timeout");
             if (int.TryParse(timeout, out var value) && value > 0)
             {
                 return value * 1000;
@@ -92,8 +94,8 @@ namespace Alley.Utils.Configuration
 
         private string ParseMetricQuery(string metricType)
         {
-            var path = _configuration["Metrics:BasePath"];
-            var baseQuery = _configuration["Metrics:BaseQuery"];
+            var path = _configuration["Metrics:default:BasePath"];
+            var baseQuery = _configuration["Metrics:default:BaseQuery"];
             var query = ParseMetric(metricType, "Query");
             return $"{path}?{baseQuery}={query}";
         }

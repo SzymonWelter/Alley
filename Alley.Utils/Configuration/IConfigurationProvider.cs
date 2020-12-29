@@ -11,6 +11,7 @@ namespace Alley.Utils.Configuration
         string HealthCheckQuery { get; }
         int HealthCheckTimeout { get;}
         int GrpcServerPort { get; }
+        int MetricsTimeout { get; }
         int GetPort(string jobName);
     }
 }
