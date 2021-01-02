@@ -122,8 +122,8 @@ namespace Alley.Core.Handling
 
                 await Task.WhenAny(requestRewriteTask, responseRewriteTask);
                 await streamSource.RequestStream.CompleteAsync();
-                SessionHelper.HandleIfError(await requestRewriteTask);
-                SessionHelper.HandleIfError(await responseRewriteTask);
+                SessionHelper.HandleIfError(await requestRewriteTask, _logger);
+                SessionHelper.HandleIfError(await responseRewriteTask, _logger);
             }
             finally
             {
