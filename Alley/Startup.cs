@@ -6,7 +6,9 @@ using Alley.Context;
 using Alley.Core;
 using Alley.Definitions.Interfaces;
 using Alley.Management;
+using Alley.Monitoring;
 using Alley.Serialization.Models;
+using Alley.Utils.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace Alley
@@ -17,17 +19,23 @@ namespace Alley
         private readonly IGrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel> _serverBuilder;
         private readonly IMicroserviceContext _microserviceContext;
         private readonly IManagementServerRunner _managementServerRunner;
+        private readonly IMonitoringDirector _monitoringDirector;
+        private readonly IConfigurationProvider _configurationProvider;
 
         public Startup(
             IMicroservicesDefinitionsProvider definitionsProvider,
             IGrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel> serverBuilder, 
             IMicroserviceContext microserviceContext,
-            IManagementServerRunner managementServerRunner)
+            IManagementServerRunner managementServerRunner,
+            IMonitoringDirector monitoringDirector,
+            IConfigurationProvider configurationProvider)
         {
             _definitionProvider = definitionsProvider;
             _serverBuilder = serverBuilder;
             _microserviceContext = microserviceContext;
             _managementServerRunner = managementServerRunner;
+            _monitoringDirector = monitoringDirector;
+            _configurationProvider = configurationProvider;
         }
         public void Run()
         {
@@ -39,21 +47,18 @@ namespace Alley
                     microserviceDefinition.Services.Select(s => s.Name));
             }
 
-            _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5001"));
-            _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5002"));
-            _microserviceContext.RegisterInstance("Counter", new Uri("http://localhost:5003"));
-            
-
             var grpcServer = _serverBuilder
                 .EnableHttp()
-                .ConfigurePort(5000)
+                .ConfigurePort(_configurationProvider.GrpcServerPort)
                 .Build();
 
             var grpcServerThread =  new Thread(grpcServer.Run);
             var managementThread = new Thread(_managementServerRunner.Run);
+            var monitoringThread = new Thread(_monitoringDirector.Run);
             
             grpcServerThread.Start();
             managementThread.Start();
+            monitoringThread.Start();
             grpcServerThread.Join();
         }
     }

@@ -57,7 +57,11 @@ namespace Alley.Context
                 Result<IEnumerable<IReadonlyMicroserviceInstance>>.Failure(Messages.InstancesOfMicroserviceDoesntExist(microservice.Name));
         }
 
-        
+        public IEnumerable<IReadonlyMicroserviceInstance> GetInstances()
+        {
+            return _instances.Values;
+        }
+
         public IResult UpdateMetric(Uri uri, MetricType metricType, Func<IInstanceMetric, IInstanceMetric> updateRecipe)
         {
             if (!_instances.TryGetValue(uri, out var instance))
@@ -123,6 +127,11 @@ namespace Alley.Context
             return result;
         }
 
+        public bool MicroserviceExists(string microserviceName)
+        {
+            return _microservices.ContainsKey(microserviceName);
+        }
+
         public IResult UnregisterMicroservice(string microserviceName)
         {
             if (microserviceName == null)
@@ -158,7 +167,7 @@ namespace Alley.Context
             }
             if (_instances.ContainsKey(uri))
             {
-                var message = Messages.InstanceAlreadyRegistered(uri);
+                var message = Messages.InstanceAlreadyRegistered(microserviceName, uri);
                 _logger.Error(message);
                 return Result.Failure(message);
             }
@@ -196,8 +205,9 @@ namespace Alley.Context
             {
                 return Result.Failure(Messages.MicroserviceDoesntExistMessage(removedInstance.MicroServiceName));
             }
-            microservice.UnregisterInstance(instanceUri);
-            return Result.Success(Messages.InstanceSuccessfullyUnregistered(instanceUri));
+            var result = microservice.UnregisterInstance(instanceUri);
+            _logger.LogResult(result);
+            return result;
         }
 
         public IResult<ChannelBase> GetChannel(Uri uri)

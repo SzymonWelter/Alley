@@ -84,7 +84,7 @@ namespace Alley.Context.Tests
             Assert.True(result.IsSuccess);
             Assert.NotEmpty(instances);
             Assert.Contains(instance, instances);
-            Assert.Equal(Messages.InstanceSuccessfullyRegistered(uri), result.Message);
+            Assert.Equal(Messages.InstanceSuccessfullyRegistered(instance), result.Message);
         }
 
         [Fact]
@@ -116,8 +116,8 @@ namespace Alley.Context.Tests
             Assert.True(registrationResult.IsSuccess);
             Assert.True(unregistrationResult.IsSuccess);
 
-            Assert.Equal(Messages.InstanceSuccessfullyRegistered(uri), registrationResult.Message);
-            Assert.Equal(Messages.InstanceSuccessfullyUnregistered(uri), unregistrationResult.Message);
+            Assert.Equal(Messages.InstanceSuccessfullyRegistered(instance), registrationResult.Message);
+            Assert.Equal(Messages.InstanceSuccessfullyUnregistered(instance), unregistrationResult.Message);
         }
         
         [Fact]

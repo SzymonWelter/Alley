@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RuntimeIdentifiers>win10-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,11 +24,14 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Remove="greet.proto" />
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Alley.Core\Alley.Core.csproj" />
+    <ProjectReference Include="..\Alley.Monitoring\Alley.Monitoring.csproj" />
     <ProjectReference Include="..\Alley.Management\Alley.Management.csproj" />
   </ItemGroup>
 
