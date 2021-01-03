@@ -8,6 +8,6 @@ namespace Alley.Utils.Helpers
             $"{package}.{name}";
 
         public static string FormatMicroserviceInstance(string serviceName, Uri uri) =>
-            $"Microservice: {serviceName}, Uri: {uri}";
+            $"{{Microservice: {serviceName}, Uri: {uri}}}";
     }
 }

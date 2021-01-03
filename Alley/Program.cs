@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Net.Http;
 using Alley.Context;
 using Alley.Context.Factories;
-using Alley.Context.LoadBalancing;
 using Alley.Core;
 using Alley.Core.Handling;
 using Alley.Definitions;
@@ -13,6 +12,10 @@ using Alley.Definitions.Mappers;
 using Alley.Definitions.Mappers.Interfaces;
 using Alley.Definitions.Wrappers;
 using Alley.Definitions.Wrappers.Interfaces;
+using Alley.LoadBalancing;
+using Alley.LoadBalancing.Strategies;
+using Alley.Monitoring;
+using Alley.Management;
 using Alley.Serialization.Models;
 using Alley.Utils;
 using Google.Protobuf.Reflection;
@@ -26,25 +29,35 @@ namespace Alley
 {
     public static class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
+            var serviceProviderFactory = new AlleyServiceProviderFactory();
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
             
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var managementRunner = new ManagementServerRunner();
+            serviceCollection.AddSingleton<IManagementServerRunner>(managementRunner);
+            serviceProviderFactory.CreateBuilder(serviceCollection);
+            
+            var managementBuilder = new ManagementServerBuilder(serviceProviderFactory);
+            var host = managementBuilder.Build();
+            managementRunner.SetHost(host);
+            
+            var serviceProvider = serviceProviderFactory.CreateServiceProvider();
  
-            await serviceProvider.GetService<Startup>().Run();
+            serviceProvider.GetService<Startup>().Run();
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
         {
             var configuration = BuildConfiguration();
             serviceCollection.AddSingleton(configuration);
-            
+
             var logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
             serviceCollection.AddSingleton<ILogger>(logger);
+            serviceCollection.AddSingleton<IMonitoringDirector, MonitoringDirector>();
             serviceCollection
                 .AddSingleton<
                     ISessionFactory<IAlleyMessageModel, IAlleyMessageModel>,
@@ -54,19 +67,31 @@ namespace Alley
                     ISessionFactory<IAlleyMessageModel, IAlleyMessageModel>,
                     SessionFactory<IAlleyMessageModel, IAlleyMessageModel>>();
             
+            serviceCollection.AddSingleton(serviceCollection);
             serviceCollection.AddSingleton<IConnectionTargetProvider, LoadBalancingManager>();
-            serviceCollection.AddSingleton<ILoadBalancingStrategy, ConnectionCountStrategy>();
+            serviceCollection.AddSingleton<ILoadBalancingStrategy, ProcessorUsageStrategy>();
 
             serviceCollection.AddSingleton<MicroserviceContext>();
+            serviceCollection.AddSingleton<IConfigurationProvider, ConfigurationProvider>();
+            serviceCollection.AddSingleton<IContextManagement>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IMicroserviceContext>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IReadonlyInstanceContext>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IMetricRepository>(x => x.GetRequiredService<MicroserviceContext>());
             serviceCollection.AddSingleton<IChannelProvider>(x => x.GetRequiredService<MicroserviceContext>());
-            
+
+            void ConfigureClient(HttpClient client)
+            {
+                client.BaseAddress = new Uri(configuration["Metrics:default:BaseUrl"]);
+            }
+
+            serviceCollection.AddHttpClient<IHealthFetcher, HealthFetcher>(ConfigureClient);
+            serviceCollection.AddHttpClient<CpuUsageFetcher>(ConfigureClient);
+
             serviceCollection.AddTransient<
                 IGrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel>, 
                 GrpcServerBuilder<IAlleyMessageModel, IAlleyMessageModel>>();
-            serviceCollection.AddTransient<IConfigurationProvider, ConfigurationProvider>();
+            serviceCollection.AddTransient<IHealthRegistration, HealthRegistration>();
+            serviceCollection.AddTransient<IMetricsRegistration, MetricsRegistration>();
             serviceCollection.AddTransient<IAlleyLogger, AlleyLogger>();
             serviceCollection.AddTransient<IMicroservicesDefinitionsProvider, MicroservicesDefinitionsProvider>();
             serviceCollection.AddTransient<IMicroserviceDefinitionBuilder, MicroserviceDefinitionBuilder>();
@@ -76,6 +101,9 @@ namespace Alley
             serviceCollection.AddTransient<ITextReaderFactory, TextReaderFactory>();
             serviceCollection.AddTransient<IMethodFactory<IAlleyMessageModel, IAlleyMessageModel>, MethodFactory>();
             serviceCollection.AddTransient<IMicroserviceInstanceFactory, MicroserviceInstanceFactory>();
+            serviceCollection.AddTransient<IMetricMetadataFactory, MetricMetadataFactory>();
+            serviceCollection.AddTransient<IMetricsProvider, MetricsProvider>();
+            serviceCollection.AddTransient<IFetchersProvider, FetchersProvider>();
             serviceCollection
                 .AddTransient<IMicroserviceDefinitionBuilderFactory, MicroserviceDefinitionBuilderFactory>();
             serviceCollection

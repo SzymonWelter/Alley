@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Alley.Utils.Helpers;
 
 namespace Alley.Utils
 {
@@ -33,11 +35,11 @@ namespace Alley.Utils
         public static string CanNotUpdateMetric(string metricName) =>
             $"Can not update metric: {metricName} based on previous metric because it doesnt exist";
 
-        public static string InstanceSuccessfullyRegistered(Uri uri) =>
-            $"Instance: {uri} successfully registered";
+        public static string InstanceSuccessfullyRegistered(object instance) =>
+            $"Instance: {instance} successfully registered";
 
-        public static string InstanceAlreadyRegistered(Uri uri) =>
-            $"Instance: {uri} already registered before";
+        public static string InstanceAlreadyRegistered(string microserviceName, Uri uri) =>
+            $"Instance:{FormatHelper.FormatMicroserviceInstance(microserviceName, uri)} already registered before";
 
         public static string InstancesOfMicroserviceDoesntExist(string microserviceName) =>
             $"There is no instance of {microserviceName} microservice";
@@ -48,11 +50,11 @@ namespace Alley.Utils
         public static string CanNotUnregisterInstanceWithNullUri(string serviceName)=>
             $"Can not unregister instance of {serviceName} microservice with null uri";
         
-        public static string CanNotUnregisterInstanceWithNullUri()=>
+        public static string CanNotUnregisterInstanceWithNullUri() =>
             $"Can not unregister instance with null uri";
 
-        public static string InstanceSuccessfullyUnregistered(Uri uri) =>
-            $"Instance: {uri} successfully unregistered";
+        public static string InstanceSuccessfullyUnregistered(object instance) =>
+            $"Instance: {instance} successfully unregistered";
 
         public static string CanNotUnregisterNotExistingInstance(Uri uri, string microserviceName) =>
             $"Can not unregister not existing instance: {uri} of {microserviceName} microservice";
@@ -71,5 +73,17 @@ namespace Alley.Utils
 
         public static string CanNotExecuteLoadBalancingStrategyForZeroAvailableInstances() =>
             "Can not execute load balancing strategy for zero available instances";
+
+        public static string CanNotFindSuitableTarget(IEnumerable<object> instances) =>
+            $"Can not find suitable targets: {string.Join(" | ", instances)}";
+
+        public static string ConnectionStartedWith(string target) =>
+            $"Connection started with {target}";
+
+        public static string ConnectionEndedWith(string target) =>
+            $"Connection ended with {target}";
+
+        public static string MonitoringCrashed(string eMessage) =>
+            $"Monitoring crashed: {eMessage}";
     }
 }

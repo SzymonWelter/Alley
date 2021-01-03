@@ -1,6 +1,7 @@
 ﻿using Alley.Context;
-using Alley.Context.LoadBalancing;
 using Alley.Definitions.Mappers.Interfaces;
+using Alley.LoadBalancing;
+using Alley.Utils;
 using Alley.Utils.Configuration;
 using Alley.Utils.Helpers;
 using Grpc.Core;
@@ -16,19 +17,22 @@ namespace Alley.Core.Handling
         private readonly IMetricRepository _metricRepository;
         private readonly IChannelProvider _channelProvider;
         private readonly IConfigurationProvider _configurationProvider;
+        private readonly IAlleyLogger _logger;
 
         public SessionFactory(
             IConnectionTargetProvider connectionTargetProvider,
             IMethodFactory<TRequest, TResponse> methodFactory,
             IMetricRepository metricRepository, 
             IChannelProvider channelProvider,
-            IConfigurationProvider configurationProvider)
+            IConfigurationProvider configurationProvider,
+            IAlleyLogger logger)
         {
             _connectionTargetProvider = connectionTargetProvider;
             _configurationProvider = configurationProvider;
             _methodFactory = methodFactory;
             _metricRepository = metricRepository;
             _channelProvider = channelProvider;
+            _logger = logger;
         }
 
         public IConnectionSession<TRequest, TResponse> CreateSession(string methodFullName, MethodType methodType)
@@ -36,12 +40,12 @@ namespace Alley.Core.Handling
             var method = _methodFactory.Create(methodFullName, methodType);
 
             var targetIpResult = _connectionTargetProvider.GetTarget(method.ServiceName);
-            SessionHelper.HandleIfError(targetIpResult);
+            SessionHelper.HandleIfError(targetIpResult, _logger);
 
             var channelResult = _channelProvider.GetChannel(targetIpResult.Value);
-            SessionHelper.HandleIfError(channelResult);
+            SessionHelper.HandleIfError(channelResult, _logger);
 
-            return new ConnectionSession<TRequest, TResponse>(channelResult.Value, method, _metricRepository, _configurationProvider);
+            return new ConnectionSession<TRequest, TResponse>(channelResult.Value, method, _metricRepository, _configurationProvider, _logger);
         }
     }
 }

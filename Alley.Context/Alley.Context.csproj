@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RuntimeIdentifiers>win10-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,7 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Grpc.Net.Client" Version="2.31.0" />
+      <PackageReference Include="Grpc.Core.Api" Version="2.32.0" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.32.0" />
     </ItemGroup>
 
 </Project>

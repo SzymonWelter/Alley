@@ -23,7 +23,7 @@ namespace Alley.Definitions
         
         public IEnumerable<IMicroserviceDefinition> GetMicroservicesDefinitions()
         {
-            var rootProtosDirectory = _configurationProvider.GetProtosLocalization();
+            var rootProtosDirectory = _configurationProvider.GetProtosPath();
 
             return rootProtosDirectory
                 .GetDirectories()
