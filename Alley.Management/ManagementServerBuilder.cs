@@ -27,28 +27,4 @@ namespace Alley.Management
                     webBuilder.UseStartup<Startup>();
                 });
     }
-
-    public class ManagementServerRunner : IManagementServerRunner
-    {
-        private IHost _host;
-
-        public void SetHost(IHost host)
-        {
-            _host = host;
-        }
-        public void Run()
-        {
-            _host.Run();
-        }
-    }
-
-    public interface IManagementServerRunner
-    {
-        void Run();
-    }
-
-    public interface IManagementServerBuilder
-    {
-        IHost Build();
-    }
 }

@@ -1,4 +1,5 @@
 using System.IO;
+using Alley.Management.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -25,6 +26,15 @@ namespace Alley.Management
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IClientMapper, ClientMapper>();
+            
+            services.AddCors(o => o.AddPolicy("AllowAny", builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
@@ -50,6 +60,8 @@ namespace Alley.Management
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("AllowAny");
 
             app.UseEndpoints(endpoints =>
             {
