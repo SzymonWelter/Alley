@@ -1,7 +1,12 @@
-const getServices = () => {
-    let services;
+import { getAlleyUrl } from "./configuration.service";
 
-    return services;
+const getServices = (setServices) => {
+  const url = `${getAlleyUrl()}/microservices`;
+  fetch(url)
+    .then((res) => res.json())
+    .then((res) => {
+      setServices(res);
+    });
 };
 
 export { getServices };

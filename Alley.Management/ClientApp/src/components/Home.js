@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { getServices } from "../services/microservices.service";
 
 export function Home() {
   const initialServicesState = [];
   const [services, setServices] = useState(initialServicesState);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/microservices`)
-      .then((res) => res.json())
-      .then((res) => {
-        setServices(res);
-      });
-
+    getServices(setServices);
     return () => {
       setServices(initialServicesState);
     };
