@@ -321,7 +321,11 @@ namespace Alley.Context.Tests
             const string microserviceName = "Microservice";
             var instance = new MicroserviceInstance(microserviceName, uri);
             var microservice = Substitute.For<IMicroservice>();
+            var expectedResult = Substitute.For<IResult>();
             var expectedMessage = Messages.InstanceSuccessfullyUnregistered(instance);
+            expectedResult.IsSuccess.Returns(true);
+            expectedResult.Message.Returns(expectedMessage);
+            microservice.UnregisterInstance(uri).Returns(expectedResult);
             _instances.Remove(uri, out _).Returns(x =>
             {
                 x[1] = instance;
